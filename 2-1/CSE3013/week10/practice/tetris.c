@@ -45,6 +45,8 @@ void InitTetris(){
 	gameOver=0;
 	timed_out=0;
 
+	findXStartEnd();
+
 	DrawOutline();
 	DrawField();
 	DrawBlock(blockY,blockX,nextBlock[0],blockRotate,' ');
@@ -659,8 +661,8 @@ void CreateTree(RecPointer node, int level) {
 	while (recR < possibleRotate[nextBlock[node->level]]) {
 
 		// Find X start point and end point of each blockID to see every possible position
-		recX = findXStart(nextBlock[node->level], recR);
-		while (recX <= findXEnd(nextBlock[node->level], recR)) {
+		recX = XStartEnd[nextBlock[node->level]][recR][0];
+		while (recX <= XStartEnd[nextBlock[node->level]][recR][1]) {
 			node->children[index] = (RecPointer) malloc(sizeof(RecNode));
 			Branch++;	// For counting every node created
 			
@@ -730,11 +732,18 @@ int findXEnd(int blockID, int blockRotate) {
 	return recX;
 }
 
+void findXStartEnd(int blockID, int blockRotate) {
+	for (int i = 0; i < NUM_OF_SHAPE; i++) {
+		for (int j = 0; j < NUM_OF_ROTATE; j++) {
+			XStartEnd[i][j][0] = findXStart(i, j);
+			XStartEnd[i][j][1] = findXEnd(i, j);
+		}
+	}
+}
+
 void FieldCpy(char dest[HEIGHT][WIDTH], char src[HEIGHT][WIDTH]) {
-    for (int i = 0; i < HEIGHT; i++) {
-        for(int j = 0; j < WIDTH; j++) {
-            dest[i][j] = src[i][j];
-        }
+	for (int i = 0; i < HEIGHT; i++) {
+        memcpy(dest[i], src[i], WIDTH * sizeof(char));
     }
 }
 

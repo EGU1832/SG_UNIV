@@ -31,16 +31,19 @@
 
 #define CHILDREN_MAX 36
 
-int Branch, freeNum;
+// for code review
+int Branch, freeNumq
 
 typedef struct _RecNode *RecPointer;
 typedef struct _RecNode{
 	int level, accumulatedScore, numChildren;
 	int rec_X, rec_Y, rec_R;
 	char recField[HEIGHT][WIDTH];
-	RecPointer children[CHILDREN_MAX];
+	RecPointer *children;
 	RecPointer parent;
 } RecNode;
+
+int XStartEnd[NUM_OF_SHAPE][NUM_OF_ROTATE][2];
 
 typedef struct _RankNode *RankPointer;
 typedef struct _RankNode{
@@ -153,15 +156,6 @@ const char block[NUM_OF_SHAPE][NUM_OF_ROTATE][BLOCK_HEIGHT][BLOCK_WIDTH] ={
 
 int possibleRotate[NUM_OF_SHAPE] = {2, 4, 4, 4, 1, 2, 2};
 int possibleBranches[NUM_OF_SHAPE] = {17, 34, 34, 34, 9, 17, 17};
-int possibleXNum[NUM_OF_SHAPE][NUM_OF_ROTATE] = {
-    {7, 10, 7, 10},
-    {8, 9, 8, 9},
-    {8, 9, 8, 9},
-    {8, 9, 8, 9},
-    {9, 9, 9, 9},
-    {8, 9, 8, 9},
-    {8, 9, 8, 9}
-};
 
 char field[HEIGHT][WIDTH];	/* 테트리스의 메인 게임 화면 */
 int nextBlock[BLOCK_NUM];	/* 현재 블럭의 ID와 다음 블럭의 ID들을 저장; [0]: 현재 블럭; [1]: 다음 블럭 */
@@ -387,6 +381,8 @@ void FieldCpy(char dest[HEIGHT][WIDTH], char src[HEIGHT][WIDTH]);
 int findXStart(int blockID, int blockRotate);
 
 int findXEnd(int blockID, int blockRotate);
+
+void findXStartEnd();
 
 void DrawRecField(char f[HEIGHT][WIDTH], int k);
 

@@ -31,6 +31,7 @@
 
 #define CHILDREN_MAX 36
 
+// for code review
 int Branch, freeNum;
 
 typedef struct _RecNode *RecPointer;
@@ -41,6 +42,8 @@ typedef struct _RecNode{
 	RecPointer children[CHILDREN_MAX];
 	RecPointer parent;
 } RecNode;
+
+int XStartEnd[BLOCK_NUM][NUM_OF_ROTATE][2];
 
 typedef struct _RankNode *RankPointer;
 typedef struct _RankNode{
@@ -387,6 +390,8 @@ void FieldCpy(char dest[HEIGHT][WIDTH], char src[HEIGHT][WIDTH]);
 int findXStart(int blockID, int blockRotate);
 
 int findXEnd(int blockID, int blockRotate);
+
+void findXStartEnd();
 
 void DrawRecField(char f[HEIGHT][WIDTH], int k);
 

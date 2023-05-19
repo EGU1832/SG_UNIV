@@ -28,6 +28,8 @@ int main(){
 	return 0;
 }
 
+/* Play */
+//{{{
 void InitTetris(){
 	int i,j;
 
@@ -44,6 +46,8 @@ void InitTetris(){
 	score=0;	
 	gameOver=0;
 	timed_out=0;
+
+	findXStartEnd();
 
 	DrawOutline();
 	DrawField();
@@ -250,7 +254,10 @@ char menu(){
 	printw("4. exit\n");
 	return wgetch(stdscr);
 }
+//}}}
 
+/* Functions for play */
+//{{{
 int CheckToMove(char f[HEIGHT][WIDTH],int currentBlock,int blockRotate, int blockY, int blockX){
 	// user code
     for(int i = 0; i < BLOCK_HEIGHT; i++) {
@@ -405,7 +412,10 @@ void DrawShadow(int y, int x, int blockID,int blockRotate){
 
     move(HEIGHT,WIDTH+10);
 }
+//}}}
 
+/* Rank */
+//{{{
 void createRankList(){
 	// 목적: Input파일인 "rank.txt"에서 랭킹 정보를 읽어들임, 읽어들인 정보로 랭킹 목록 생성
 	FILE *fp;
@@ -594,7 +604,10 @@ void newRank(int score){
 	
 	writeRankFile();
 }
+//}}}
 
+/* Recommend */
+//{{{
 void DrawRecommend(int blockID){
 	
 	/* for check if tree has generated normally
@@ -630,19 +643,22 @@ void recommend(RecPointer root) {
 	root = (RecPointer) malloc(sizeof(RecNode));
     root->level = 0;
     root->accumulatedScore = score;
-    FieldCpy(root->recField, field);
+    memcpy(root->recField, field, sizeof(char[HEIGHT][WIDTH]));
 
 	// After creating Tree, all the recommed coordinate glabal variables will updated
     CreateTree(root, 0);
 
+	int BranchMust = possibleBranches[nextBlock[0]] * possibleBranches[nextBlock[1]] * possibleBranches[nextBlock[2]] + possibleBranches[nextBlock[0]] * possibleBranches[nextBlock[1]] + possibleBranches[nextBlock[0]];
 	/* for check if tree has generated normally
+	{{{
 	move(30,30);
 	printw("                                                  ");
 	move(30,30);
-	printw("rootBranch : %d %d %d %d", root->numChildren, root->children[0]->numChildren, root->children[0]->children[0]->numChildren, Branch);
+	printw("rootBranch : %d %d %d %d %d", root->numChildren, root->children[0]->numChildren, root->children[0]->children[0]->numChildren, Branch, BranchMust);
 	DrawRecField(root->children[0]->recField, 40);
 	DrawRecField(root->children[0]->children[0]->recField, 51);
-	DrawRecField(root->children[0]->children[0]->children[0]->recField, 62); */
+	DrawRecField(root->children[0]->children[0]->children[0]->recField, 62);
+	}}} */
     
 	// Free all nodes for preventing segmentation fault
 	DestroyTree(root);
@@ -652,6 +668,10 @@ void CreateTree(RecPointer node, int level) {
 
 	if (node->level == VISIBLE_BLOCK) { return; }
 
+	// Decide the numChildren and malloc Children
+	node->numChildren = possibleBranches[nextBlock[node->level]];
+	node->children = malloc(node->numChildren * sizeof(RecPointer));
+
 	// Init CreateTree local variable
 	int recR = 0, recY = -1, recX = 0, index = 0;
 
@@ -659,15 +679,15 @@ void CreateTree(RecPointer node, int level) {
 	while (recR < possibleRotate[nextBlock[node->level]]) {
 
 		// Find X start point and end point of each blockID to see every possible position
-		recX = findXStart(nextBlock[node->level], recR);
-		while (recX <= findXEnd(nextBlock[node->level], recR)) {
-			node->children[index] = (RecPointer) malloc(sizeof(RecNode));
+		recX = XStartEnd[nextBlock[node->level]][recR][0];
+		while (recX <= XStartEnd[nextBlock[node->level]][recR][1]) {
+			node->children[index] = malloc(sizeof(RecNode));
 			Branch++;	// For counting every node created
 			
 			// Init children node variables
 			node->children[index]->level = level + 1;
 			node->children[index]->accumulatedScore = node->accumulatedScore;
-			FieldCpy(node->children[index]->recField, node->recField);
+			memcpy(node->children[index]->recField, node->recField, sizeof(char[HEIGHT][WIDTH]));
 			node->children[index]->parent = node;
 			
 			// Find possible recY, add it to recField and calculate score
@@ -704,17 +724,22 @@ void CreateTree(RecPointer node, int level) {
 		recR++;
 	}
 	// Update numChildren to free node properly
-	node->numChildren = index;
 }
+//}}}
 
 /* Functions for recommend instructions */
+//{{{
 void DestroyTree(RecPointer node) {
-    if (node->level == VISIBLE_BLOCK) { return; }
+    if (node->level == VISIBLE_BLOCK) { 
+		free(node);
+		return;
+	}
 
     for (int i = 0; i < node->numChildren; i++) {
         DestroyTree(node->children[i]);
     }
 	
+	free(node->children);
 	free(node);
 }
 
@@ -730,11 +755,18 @@ int findXEnd(int blockID, int blockRotate) {
 	return recX;
 }
 
+void findXStartEnd() {
+	for (int i = 0; i < NUM_OF_SHAPE; i++) {
+		for (int j = 0; j < NUM_OF_ROTATE; j++) {
+			XStartEnd[i][j][0] = findXStart(i, j);
+			XStartEnd[i][j][1] = findXEnd(i, j);
+		}
+	}
+}
+
 void FieldCpy(char dest[HEIGHT][WIDTH], char src[HEIGHT][WIDTH]) {
-    for (int i = 0; i < HEIGHT; i++) {
-        for(int j = 0; j < WIDTH; j++) {
-            dest[i][j] = src[i][j];
-        }
+	for (int i = 0; i < HEIGHT; i++) {
+        memcpy(dest[i], src[i], WIDTH * sizeof(char));
     }
 }
 
@@ -756,8 +788,10 @@ void DrawRecField(char f[HEIGHT][WIDTH], int k){
 void recommendedPlay(){
 	// user code
 }
+//}}}
 
 /* Functions for rank instructinos */
+//{{{
 void AddLinkedList(RankPointer *Rank, char *name, int score) {
     RankPointer newNode, currNode, prevNode;
 
@@ -843,3 +877,4 @@ void FreeList(RankPointer *Rank) {
 
     *Rank = NULL;
 }
+//}}}
