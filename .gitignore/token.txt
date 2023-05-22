@@ -1,4 +1,0 @@
-/* Token for EGU1832 Github */
-
-user.name : EGU1832
-user.password : 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
