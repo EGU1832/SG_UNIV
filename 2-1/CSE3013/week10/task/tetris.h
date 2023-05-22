@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #define WIDTH	10
 #define HEIGHT	22
@@ -24,6 +25,7 @@
 // menu number
 #define MENU_PLAY '1'
 #define MENU_RANK '2'
+#define MENU_RECOMMENDEDPLAY '3'
 #define MENU_EXIT '4'
 
 // 사용자 이름의 길이
@@ -32,7 +34,7 @@
 #define CHILDREN_MAX 36
 
 // for code review
-int Branch, freeNumq
+int Branch, freeNum;
 
 typedef struct _RecNode *RecPointer;
 typedef struct _RecNode{

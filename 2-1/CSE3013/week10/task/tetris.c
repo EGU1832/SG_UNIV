@@ -19,6 +19,7 @@ int main(){
 		switch(menu()){
 		case MENU_PLAY: play(); break;
         case MENU_RANK: rank(); break;
+		case MENU_RECOMMENDEDPLAY: recommendedPlay(); break;
 		case MENU_EXIT: exit=1; FreeList(&Rank); break;
 		default: break;
 		}
@@ -48,6 +49,8 @@ void InitTetris(){
 	timed_out=0;
 
 	findXStartEnd();
+	
+	recommend(root);
 
 	DrawOutline();
 	DrawField();
@@ -188,8 +191,9 @@ void DrawBlock(int y, int x, int blockID,int blockRotate,char tile){
 }
 
 void DrawBlockWithFeatures(int y, int x, int blockID, int blockRotate){
-    DrawBlock(y, x, blockID, blockRotate, ' ');
     DrawShadow(y, x, blockID, blockRotate);
+	DrawRecommend(blockID);
+	DrawBlock(y, x, blockID, blockRotate, ' ');
 }
 
 void DrawBox(int y,int x, int height, int width){
@@ -648,9 +652,9 @@ void recommend(RecPointer root) {
 	// After creating Tree, all the recommed coordinate glabal variables will updated
     CreateTree(root, 0);
 
-	int BranchMust = possibleBranches[nextBlock[0]] * possibleBranches[nextBlock[1]] * possibleBranches[nextBlock[2]] + possibleBranches[nextBlock[0]] * possibleBranches[nextBlock[1]] + possibleBranches[nextBlock[0]];
+
 	/* for check if tree has generated normally
-	{{{
+	int BranchMust = possibleBranches[nextBlock[0]] * possibleBranches[nextBlock[1]] * possibleBranches[nextBlock[2]] + possibleBranches[nextBlock[0]] * possibleBranches[nextBlock[1]] + possibleBranches[nextBlock[0]];
 	move(30,30);
 	printw("                                                  ");
 	move(30,30);
@@ -658,8 +662,8 @@ void recommend(RecPointer root) {
 	DrawRecField(root->children[0]->recField, 40);
 	DrawRecField(root->children[0]->children[0]->recField, 51);
 	DrawRecField(root->children[0]->children[0]->children[0]->recField, 62);
-	}}} */
-    
+    */
+
 	// Free all nodes for preventing segmentation fault
 	DestroyTree(root);
 }
@@ -725,6 +729,67 @@ void CreateTree(RecPointer node, int level) {
 	}
 	// Update numChildren to free node properly
 }
+
+void player(int sig) {
+	if (blockRotate != recommendR) { ProcessCommand(KEY_UP); return; }
+	else if (blockX != recommendX) {
+		if (blockX < recommendX) { ProcessCommand(KEY_RIGHT); return; }
+		else if (blockX > recommendX) { ProcessCommand(KEY_LEFT); return; }
+	}
+	else { 
+		//ProcessCommand(KEY_DOWN);
+		return; 
+	}
+}
+
+void recommendedPlay(){
+	// user code
+	int command;
+	clear();
+	act.sa_handler = BlockDown, player;
+	sigaction(SIGALRM,&act,&oact);
+	InitTetris();
+
+	struct itimerval timer;
+    timer.it_value.tv_sec = 0; // 초기 타이머 값 설정
+    timer.it_value.tv_usec = 100000; // 0.5초 (마이크로초 단위)
+    timer.it_interval.tv_sec = 0; // 반복 주기 설정
+    timer.it_interval.tv_usec = 100000; // 0.5초 (마이크로초 단위)
+    setitimer(ITIMER_REAL, &timer, NULL); // 타이머 설정
+
+	do{
+		/*
+		if(timed_out==0){
+			alarm(1);
+			timed_out=1;
+		}
+		*/
+
+		command = GetCommand();
+		player(SIGALRM);
+		if (command != QUIT) { continue; }
+		else if(ProcessCommand(command)==QUIT){
+			setitimer(ITIMER_REAL, 0, NULL);
+			DrawBox(HEIGHT/2-1,WIDTH/2-5,1,10);
+			move(HEIGHT/2,WIDTH/2-4);
+			printw("Good-bye!!");
+			refresh();
+			getch();
+
+			return;
+		}
+	}while(!gameOver);
+
+	setitimer(ITIMER_REAL, 0, NULL);
+	getch();
+	DrawBox(HEIGHT/2-1,WIDTH/2-5,1,10);
+	move(HEIGHT/2,WIDTH/2-4);
+	printw("GameOver!!");
+	refresh();
+	getch();
+	newRank(score);
+}
+
 //}}}
 
 /* Functions for recommend instructions */
@@ -785,9 +850,6 @@ void DrawRecField(char f[HEIGHT][WIDTH], int k){
     }
 }
 
-void recommendedPlay(){
-	// user code
-}
 //}}}
 
 /* Functions for rank instructinos */
