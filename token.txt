@@ -1,6 +1,0 @@
-# private
-
-/* Token for EGU1832 Github */
-
-user.name : EGU1832
-user.password : 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
