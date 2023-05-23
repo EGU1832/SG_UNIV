@@ -106,9 +106,8 @@ void makeMaze() {
 			determineRow(i);
 			determineColumn(i+1);
 			determineSet(i + 2);
-			print();
 		}
-		else if (i == HEIGHT - 2) { 
+		else if (i == HEIGHT - 2) {
 			determineLastRow(i);
 		}
 	}
@@ -144,15 +143,16 @@ void determineRow(int currHEIGHT) {
 
 }
 
-void determineLastRow(int currM) {
+void determineLastRow(int currHEIGHT) {
 
-	for (int i = 1; i < N; i++) {
-		if (field[currM][i * 2 + 1 - 1] == '|' && set[currM / 2][i] != set[currM / 2][i - 1]) {
-			field[currM][i * 2 + 1 - 1] = ' ';
+	int setM = currHEIGHT / 2;
 
-			int min = findMin(set[currM / 2][i], set[currM / 2][i - 1]);
-			int max = findMax(set[currM / 2][i], set[currM / 2][i - 1]);
-			set[currM / 2][i] = set[currM / 2][i - 1];
+	for (int setN = 1; setN < N; setN++) {
+		if (field[currHEIGHT][setN * 2 + 1 - 1] == '|' && set[setM][setN] != set[setM][setN - 1]) {
+			field[currHEIGHT][setN * 2 + 1 - 1] = ' ';
+
+			int min = findMin(set[setM][setN], set[setM][setN - 1]);
+			int max = findMax(set[setM][setN], set[setM][setN - 1]);
 
 			for (int j = 0; j < M; j++) {
 				for (int k = 0; k < N; k++) {
@@ -215,12 +215,15 @@ void print() {
 		printf("\n");
 	}
 
+	//print set
+	/*
 	for (int i = 0; i < M; i++){
 		for (int j = 0; j < N; j++) {
 			printf("%d ", set[i][j]);
 		}
 		printf("\n");
 	}
+	*/
 
 }
 
