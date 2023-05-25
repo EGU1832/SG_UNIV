@@ -1,18 +1,16 @@
 #include "maze.h"
 
 int main() {
+
 	srand(time(NULL));
     FILE *file;
 
     //open file
     file = fopen("maze.maz", "w");
-
 	//if file does not exist in current directory, make a new file "maze.maz"
     if (file == NULL) {
 		file = fopen("maze.maz", "w+");
 	}
-
-	//user code
 
 	//make field[M][N] M: HEIGHT, N: WIDTH
 	scanf("%d", &N);
@@ -21,7 +19,16 @@ int main() {
 	makeBasicMaze(&field, &set);
 	makeMaze();
 
+	//print maze at cmd shell to make sure if maze has created normally
 	print();
+
+	//fprint maze to maze.maz
+	for (int i = 0; i < HEIGHT; i++){
+		for (int j = 0; j < WIDTH; j++) {
+			fprintf(file, "%c", field[i][j]);
+		}
+		fprintf(file, "\n");
+	}
 
 	//free allocated memory at field
 	for (int i = 0; i < HEIGHT; i++) {
@@ -40,6 +47,8 @@ int main() {
     return 0;
 }
 
+//functions for maze
+//{{{
 void makeBasicMaze(char*** field, int*** set) {
 
 	HEIGHT = M * 2 + 1;
@@ -234,3 +243,4 @@ int findMin(int a, int b) {
 int findMax(int a, int b) {
     return (a > b) ? a : b;
 }
+//}}}
