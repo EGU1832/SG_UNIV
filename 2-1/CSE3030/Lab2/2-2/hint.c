@@ -19,7 +19,19 @@ void string_test(void) {
 
     /* TODO: Figure out what kind of test is performed here */
 
-    // ... (?)
+	if (len <= 3) {
+		puts("String is too short!");
+		exit(1);
+	}
+
+	for (i = 0; i < len; i++) {
+		if (buf[i] == buf[len - i - 1])
+			continue;
+		else {
+			puts("String is not a palindrome!");
+			exit(1);
+		}
+	}
 
     puts("Your string passed the test!");
 }
