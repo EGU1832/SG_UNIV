@@ -11,27 +11,24 @@ void string_test(void) {
     int i, len;
     char buf[48];
 
-    puts("Welcom to string testing service!");
+    puts("Welcome to string testing service!");
     gets(buf);
 
     for (len = 0; buf[len] != '\0'; len++)
         ;
 
     /* TODO: Figure out what kind of test is performed here */
-
-	if (len <= 3) {
-		puts("String is too short!");
+    if (len <= 3) {
+		puts("Stirng too short!");
 		exit(1);
 	}
 
 	for (i = 0; i < len; i++) {
-		if (buf[i] == buf[len - i - 1])
-			continue;
-		else {
-			puts("String is not a palindrome!");
-			exit(1);
-		}
-	}
+        if (buf[i] != buf[len - 1 - i]) {
+            puts("Did not pass the test");
+            exit(1);
+        }
+    }
 
     puts("Your string passed the test!");
 }

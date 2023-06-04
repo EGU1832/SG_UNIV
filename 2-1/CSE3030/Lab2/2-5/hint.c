@@ -43,6 +43,27 @@ void update_major(Student* students, int max_id) {
 
 void manage_students(void) {
     /* TODO: Figure out what this function is doing */
+    Student students[100];
+    int max_id = 0;
+    char buf[4];
+    
+    usage();
+    
+    while (1) {
+        safe_gets(buf, 4);
+        
+        if (buf[0] == 'A') {
+            add_student(students, max_id);
+            max_id++;
+        } else if (buf[0] == 'U') {
+            update_major(students, max_id);
+        } else if (buf[0] == 'E') {
+            break;
+        } else {
+            puts("Invalid input");
+        }
+    }
+	
 }
 
 int main(void) {

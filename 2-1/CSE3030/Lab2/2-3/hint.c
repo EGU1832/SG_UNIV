@@ -12,6 +12,14 @@ void use_array(void) {
     puts("Input two integers:");
 
     /* Figure out what kind of operation is performed here */
+    int num1, num2;
+
+	if (scanf("%d %d", &num1, &num2) != 2) {
+        puts("Invalid integer format");
+        return;
+    }
+
+    arr[num2] = num1;
 
     // ... (?)
 }

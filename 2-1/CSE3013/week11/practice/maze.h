@@ -3,10 +3,10 @@
 #include <string.h>
 #include <time.h>
 
-int N, M;			//N: WIDTH, M: HEIGHT
-int WIDTH, HEIGHT;	//폭과 높이
-char** field;		//maze를 나타내는 이차원 배열
-int** set;			//칸이 속해있는 집합을 나타내는 배열
+int N, M;			//N: WIDTH, M: HEIGHT for maze
+int WIDTH, HEIGHT;	//WIDTH and HEIGHT for field
+char** field;		//represent maze
+int** set;			//represent set
 int setNum;
 
 void makeBasicMaze(char*** field, int*** set);
@@ -18,4 +18,5 @@ void determineSet(int currM);
 void print();
 int findMin(int a, int b);
 int findMax(int a, int b);
-// N,M 칸은 field[N * 2 + 1][M * 2 + 1]에 저장되어있음
+//maze[height][width]
+//maze[M][N] == field[M * 2 + 1][N * 2 + 1]
