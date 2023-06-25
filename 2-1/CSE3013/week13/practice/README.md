@@ -1,7 +1,7 @@
 # Markdown
 
-> links
-> 1: <https://gist.github.com/ihoneymon/652be052a0727ad59601>
+> links<br>
+> 1: <https://gist.github.com/ihoneymon/652be052a0727ad59601><br>
 > 2: <https://github.com/jinkyukim-me/markdown_ko>
 
 ## What is Markdown?
