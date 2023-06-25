@@ -1,6 +1,8 @@
 # Markdown
 
-MarkDown Introductions: <https://gist.github.com/ihoneymon/652be052a0727ad59601>
+MarkDown Introductions:
+<https://gist.github.com/ihoneymon/652be052a0727ad59601>
+<https://github.com/jinkyukim-me/markdown_ko>
 
 ## What is Markdown?
 - 일반 텍스트 문서에 서식 요소를 추가하는 데 사용할 수 있는 간단한 mark-up 언어
